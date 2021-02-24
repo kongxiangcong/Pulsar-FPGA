@@ -33,6 +33,7 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE]);
 #endif
 
+void co_dedisp(int DM, DTYPE FFT_R[SIZE], DTYPE FFT_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE]);
 
 #include "tw_r.h"
 #include "tw_i.h"

@@ -12,6 +12,8 @@ DTYPE WW_R[SIZE], WW_I[SIZE];
 DTYPE f_coord[FCOORD], f_coord1[FCOORD];
 DTYPE dedisp_seq[SIZE];
 */
+DTYPE dedisp_seq_R[SIZE], dedisp_seq_I[SIZE];
+
 int main()
 {
 	FILE *fp;
@@ -111,7 +113,7 @@ int main()
 		fclose(fp);
 	#endif
 	
-	printf ("Comparing against output data \n");
+	printf ("Comparing fft against output data \n");
 	// std::ifstream golden("out.fft.gold.dat");
     std::ifstream golden("scipy_fft.dat");
 	DTYPE error = 0.0;
@@ -139,7 +141,7 @@ int main()
 	    fprintf(stdout, "Max Error@%d: %f\n", i, maxerror);
 	  }
 	}
-
+	
 //	fprintf(stdout, "Average Error: %f\n", error/SIZE);
 	
 	if ((error/SIZE) > .08 || maxerror > 2) { // This is somewhat arbitrary.  Should do proper error analysis.
@@ -156,5 +158,8 @@ int main()
 	  fprintf(stdout, "*******************************************\n");
 	  return 0;
 	}
+
+	printf ("\nPerforming co_dedispersion \n");
+	co_dedisp(40, OUT_R, OUT_I, dedisp_seq_R, dedisp_seq_I);
 	
 }

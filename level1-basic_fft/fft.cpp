@@ -1018,7 +1018,7 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 
 	DTYPE	Stage1_R[SIZE], Stage1_I[SIZE];
 	DTYPE	Stage2_R[SIZE], Stage2_I[SIZE];
-/*	
+
 	DTYPE	Stage3_R[SIZE], Stage3_I[SIZE];
 	DTYPE	Stage4_R[SIZE], Stage4_I[SIZE];
 	DTYPE	Stage5_R[SIZE], Stage5_I[SIZE];
@@ -1031,7 +1031,7 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 	DTYPE	Stage12_R[SIZE], Stage12_I[SIZE];
 	DTYPE	Stage13_R[SIZE], Stage13_I[SIZE];
 	DTYPE	Stage14_R[SIZE], Stage14_I[SIZE];
-
+	
 	bit_reverse(X_R, X_I, Stage1_R, Stage1_I);
 	fft_stage_1(Stage1_R, Stage1_I, Stage2_R, Stage2_I);
 	fft_stage_2(Stage2_R, Stage2_I, Stage3_R, Stage3_I);
@@ -1047,8 +1047,8 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 	fft_stage_12(Stage12_R, Stage12_I, Stage13_R, Stage13_I);
 	fft_stage_13(Stage13_R, Stage13_I, Stage14_R, Stage14_I);
 	fft_stage_14(Stage14_R, Stage14_I, OUT_R, OUT_I);
-*/
 
+/*
 	bit_reverse(X_R, X_I, Stage1_R, Stage1_I);
 	fft_stage_1(Stage1_R, Stage1_I, Stage2_R, Stage2_I);
 	fft_stage_2(Stage2_R, Stage2_I, Stage1_R, Stage1_I);
@@ -1064,58 +1064,49 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 	fft_stage_12(Stage2_R, Stage2_I, Stage1_R, Stage1_I);
 	fft_stage_13(Stage1_R, Stage1_I, Stage2_R, Stage2_I);
 	fft_stage_14(Stage2_R, Stage2_I, OUT_R, OUT_I);
-	
+*/	
 }
 
 #endif
-/*
-void linSpace(DTYPE x1, DTYPE x2, int n, DTYPE y[FCOORD]) {
-	int i = 0;
-	DTYPE d = (x2-x1)/(n-1);
 
-	for (i = 0; i < n; i++)
-	{
-#pragma HLS PIPELINE
-#pragma HLS LOOP_TRIPCOUNT min=1024 max=1024 avg=1024
-		y[i] = x1 + i*d;
-	}
-	
-}
 
-void compute_chrip(int DM, DTYPE f_coord[FCOORD], DTYPE f_coord1[FCOORD], DTYPE dedisp_seq[SIZE]) {
+void co_dedisp(int DM, DTYPE FFT_R[SIZE], DTYPE FFT_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE]) {
 	//double D = 4.148808 * 1e+15;
 	DTYPE overrate = fs / (2 * BW);
 	DTYPE n_data1 = SIZE / overrate;
 	DTYPE st = BW / (2*n_data1);
 	int num = n_data1 / 2;
+	DTYPE d = (BW - st) / num;
 
-	double temp;
-	double chirp_R
-	linSpace(st, BW, num, f_coord);
-	for (int i = 0; i < FCOORD; i++) {
-#pragma HLS PIPELINE
-#pragma HLS LOOP_TRIPCOUNT min=1024 max=1024 avg=1024
-		f_coord1[i] = f_coord[i] + fo;
-		temp = (6.283185307178 *D*DM * f_coord[i]^2) / (fo^2 * f_coord1[i]);
-	}
-	for (int j = 2; j < (n_data1/2+1); j++)
+	DTYPE chirp_R[SIZE], chirp_I[SIZE], w, f_coord, f_coord1;
+
+	for (int i = 0; i < SIZE; i++)
 	{
-		dedisp_seq[j] = 
+#pragma HLS LOOP_TRIPCOUNT min=16384 max=16384 avg=16384
+		if ((i < 1) || ((i > num) && (i < (SIZE-num)+1)))
+		{
+			OUT_R[i] = 0;
+			OUT_I[i] = 0;
+		}
+		else if((i > 0) && (i < num+1))
+		{
+			f_coord = st + (i-1) * d;
+			f_coord1 = f_coord + fo;
+			w = ((-6.283185307178) *D*DM * f_coord * f_coord) / (fo * fo * f_coord1);
+			chirp_R[i] = cos(w);
+			chirp_I[i] = sin(w);
+			OUT_R[i] = FFT_R[i] * chirp_R[i] - FFT_I[i] * chirp_I[i];
+			OUT_I[i] = FFT_R[i] * chirp_I[i] + FFT_I[i] * chirp_R[i];
+		} 
+		else if(i > SIZE-num)
+		{
+			OUT_R[i] = FFT_R[i] * chirp_R[SIZE-i-1] + FFT_I[i] * chirp_I[SIZE-i-1];
+			OUT_I[i] = FFT_R[i] * chirp_I[SIZE-i-1] - FFT_I[i] * chirp_R[SIZE-i-1];
+		}
+		
 	}
+}
 	
-	//chirp_R 
-}
 
-void co_dedisp() {
-	dedisp_sequ = zeros(1,N_data);  %预设消色散序列
- 
-dedisp_sequ(2:N_data1/2+1) = exp( -1i*2*pi*D*DM .* f_coord.^2 ./ (fo^2 * f_coord_1)); %  消色散的频谱序列 
-dedisp_sequ(N_data:-1:(N_data-N_data1/2)+1) = conj(dedisp_sequ(2:N_data1/2+1)); %  消色散频谱序列的复共轭 
-bbs_adddisp_f = fft(bbs_adddisp_t); %  色散基带数据的频域序列 
-bbs_dedisp_f = dedisp_sequ .* bbs_adddisp_f; %  相干消色散 
-bbs_dedisp_f(N_data/2+1) = abs(bbs_dedisp_f(N_data/2+1)); %  数据的对称点 
-bbs_co_dedisp_t = real(ifft(bbs_dedisp_f)); %  相干消色散后的基带数据
 
-}
 
-*/
