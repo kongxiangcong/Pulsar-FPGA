@@ -1,0 +1,26 @@
+INFO: [HLS 200-10] Running 'D:/xilinx/Vivado/2019.1/bin/unwrapped/win64.o/vivado_hls.exe'
+INFO: [HLS 200-10] For user '72449' on host 'laptop-ai9f27t7' (Windows NT_amd64 version 6.2) on Fri Feb 19 16:20:34 +0800 2021
+INFO: [HLS 200-10] In directory 'F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master'
+Sourcing Tcl script 'F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master/hls/S5_Effect_Imporve/csynth.tcl'
+INFO: [HLS 200-10] Opening project 'F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master/hls'.
+INFO: [HLS 200-10] Adding design file 'fft.cpp' to the project
+INFO: [HLS 200-10] Adding test bench file 'fft-top.cpp' to the project
+INFO: [HLS 200-10] Adding test bench file 'out.fft.gold.dat' to the project
+INFO: [HLS 200-10] Opening solution 'F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master/hls/S5_Effect_Imporve'.
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
+WARNING: [HLS 200-40] Cannot find library 'D:/xilinx/Vivado/2019.1/common/technology/xilinx/Virtex-7/Virtex-7.lib'.
+WARNING: [HLS 200-40] Cannot find library 'xilinx/Virtex-7/Virtex-7'.
+INFO: [HLS 200-10] Setting target device to 'xc7vx485t-ffg1157-1'
+INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
+INFO: [HLS 200-10] Analyzing design file 'fft.cpp' ... 
+Wrong pragma usage.
+    while executing
+"source F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master/hls/S5_Effect_Imporve/csynth.tcl"
+    invoked from within
+"hls::main F:/FPGA/xup/PP4FPGA/PP4FPGAS_Study_Notes_S1C05_HLS_FFT-master/hls/S5_Effect_Imporve/csynth.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 hls::main {*}$args"
+    (procedure "hls_proc" line 5)
+    invoked from within
+"hls_proc $argv"
