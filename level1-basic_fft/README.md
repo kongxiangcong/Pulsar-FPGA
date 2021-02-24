@@ -1,2 +1,2 @@
-# PP4FPGAS_Study_Notes_S1C05_HLS_FFT
-《FPGA并行编程》读书笔记（第一期）05_HLS_FFT源代码
+# Basic FFT
+模拟生成2^14脉冲基带数据，对数据直接FFT，并针对FFT算法进行unroll和dataflow优化
