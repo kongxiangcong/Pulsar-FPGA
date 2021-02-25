@@ -84,6 +84,11 @@
 （3）截止日期前完成项目规划中的初步规划
 
 # 二 项目进展
+实现了初步规划：模拟基带数据由FPGA消色散（在FPGA中完成FFT，色散函数计算相乘）后，再经过后续工作进行折叠处理。处理结果：
+
+![结果](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/folding.png)
+
+可以看到处理后找到了脉冲星的脉冲周期（中间浅黄色）
 ## 3.1 MATLAB模拟数据
 MATLAB生成基带数据，写入文件pulsar_S0.raw，float32类型（单精度浮点型）
 
