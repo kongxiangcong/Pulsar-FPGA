@@ -1,4 +1,4 @@
-# Pulsar-FPGA
+# 一 Pulsar-FPGA
 
 - XUP 2021 project：
 
@@ -44,20 +44,6 @@
 
 ## 2 项目规划
 
-### 2.1 已有研究基础
-
-（1）模拟脉冲星基带数据
-
-- 模拟基带数据的流程
-
-![模拟脉冲星](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/create_data.png)
-
-- 经过消色散后的脉冲星数据流程
-
-![模拟消色散](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/dedisperate_data.png)
-
-（2）基于GPU的相干消色散算法加速
-
 ### 2.2 消色散算法计算瓶颈
 
 - **计算瓶颈**：
@@ -89,8 +75,6 @@
 - 最终规划：**超大规模相干消色散算法异构并行加速**。
   多个色散量（多DM）条件下，通过多个FPGA，或者FPGA+GPU+CPU异构方法，实现超大规模相干消色散的实时处理
 
-## 3 项目计划
-
 由于完成时间有限以及开发经验不足，**本项目打算由两位学员共同完成**，两人分工明确：
 
 （1）经过本项目，初步上手Alveo加速卡，熟悉VITIS软件开发流程；
@@ -98,3 +82,33 @@
 （2）体验HLS自动综合的电路如何实现多任务流水线并行操作，初步实现小规模的定制电路；
 
 （3）截止日期前完成项目规划中的初步规划
+
+# 二 项目进展
+## 3.1 MATLAB模拟数据
+MATLAB生成基带数据，写入文件pulsar_S0.raw，float32类型（单精度浮点型）
+
+## 3.2 Python读取基带数据，生成FFT后的golden data
+python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy_fft.dat)在testbench中验证算法C代码
+
+## 3.3 HLS仿真验证
+### 3.1 S1_Baseline
+三个for循环，没有代码重构，没有dataflow，cos,sin调用DSP资源实现
+![S1_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.07.png)
+- 由于采用单精度浮点，与golden data对比，平均误差达到7.6%
+
+### 3.2 S2_Unroll
+- 优化方法：
+ 展开第一层循环（展开每一级蝶形运算），方便dataflow；
+ cos,sin调用DSP资源实现，精度方面与S1_Baseline一样
+ 
+### 3.3 S4_DATAFLOW
+- 优化方法：
+ 在S_2的基础上，采用查找表方法实现cos,sin计算，平均误差下降到0.1%
+ ![S4_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.001.png)
+ 
+### compare report
+- 经过优化加速，latency降低到2.458ms
+![latency](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/latency.png)
+
+- 牺牲少部分资源，优化了代码运算效率
+![resource](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/resource.png)
