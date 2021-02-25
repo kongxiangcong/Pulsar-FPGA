@@ -113,7 +113,9 @@ python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy
  
 ### compare report
 - 经过优化加速，latency降低到2.458ms
+
 ![latency](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/latency.png)
 
 - 牺牲少部分资源，优化了代码运算效率
+
 ![resource](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/resource.png)
