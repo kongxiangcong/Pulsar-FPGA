@@ -98,7 +98,9 @@ python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy
 ## 3.3 HLS仿真验证
 ### 3.1 S1_Baseline
 三个for循环，没有代码重构，没有dataflow，cos,sin调用DSP资源实现
+
 ![S1_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.07.png)
+
 - 由于采用单精度浮点，与golden data对比，平均误差达到7.6%
 
 ### 3.2 S2_Unroll
@@ -109,6 +111,7 @@ python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy
 ### 3.3 S4_DATAFLOW
 - 优化方法：
  在S_2的基础上，采用查找表方法实现cos,sin计算，平均误差下降到0.1%
+ 
  ![S4_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.001.png)
  
 ### compare report
