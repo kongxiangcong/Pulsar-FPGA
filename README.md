@@ -89,32 +89,33 @@
 ![结果](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/folding.png)
 
 可以看到处理后找到了脉冲星的脉冲周期（中间浅黄色）
-## 3.1 MATLAB模拟数据
+## 1 testbench生成golden data
+### 1.1 MATLAB模拟数据
 MATLAB生成基带数据，写入文件pulsar_S0.raw，float32类型（单精度浮点型）
 
-## 3.2 Python读取基带数据，生成FFT后的golden data
+### 1.2 Python读取基带数据，生成FFT后的golden data
 python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy_fft.dat)在testbench中验证算法C代码
 
-## 3.3 HLS仿真验证
-### 3.1 S1_Baseline
+## 2 HLS仿真验证
+### 2.1 S1_Baseline
 三个for循环，没有代码重构，没有dataflow，cos,sin调用DSP资源实现
 
 ![S1_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.07.png)
 
 - 由于采用单精度浮点，与golden data对比，平均误差达到7.6%
 
-### 3.2 S2_Unroll
+### 2.2 S2_Unroll
 - 优化方法：
  展开第一层循环（展开每一级蝶形运算），方便dataflow；
  cos,sin调用DSP资源实现，精度方面与S1_Baseline一样
  
-### 3.3 S4_DATAFLOW
+### 2.3 S4_DATAFLOW
 - 优化方法：
  在S_2的基础上，采用查找表方法实现cos,sin计算，平均误差下降到0.1%
  
  ![S4_精度](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/error_0.001.png)
  
-### compare report
+### 2.4 compare report
 - 经过优化加速，latency降低到2.458ms
 
 ![latency](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/latency.png)
@@ -122,3 +123,14 @@ python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy
 - 牺牲少部分资源，优化了代码运算效率
 
 ![resource](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/resource.png)
+
+## 3 FFT实现困难分析
+在HLS实现FFT时总结出实现上的问题：
+1. FFT如何应对任意点的输入？
+2. 可以自定义精度位数是FPGAd优势之一，FFT处理精度上可以如何进一步提高（比如在旋转因子计算上，chirp计算上，浮点数对FFT的影响）？
+3. 为了使代码可综合，加速的hardware function的参数必须是确定的（比如数组个数，for循环次数），这对应上问题1如何应对任意输入。
+4. FFT包含很多旋转因子（涉及到cos,sin等计算），采用查找表实现对运行效率提升很大，但是很耗费BRAM资源，导致在对FFT的数组上并没有做优化（array partition等）
+5. HLS对接口定义不熟悉，如何和外部内存文件数据进行读写是个问题。
+6. 为处理大规模数据，对FFT进行分段（overlap-save）是个方法，但是在测试时误差很大，还在调试（可能分段方式不对？）。
+
+![resource](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/ols.png)
