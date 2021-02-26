@@ -1,0 +1,9 @@
+/* linux */
+the_ROM_image:
+{
+  [bootloader, destination_cpu = a53-0] /opt/xilinx/platforms/xilinx_zcu104_base_202010_1/sw/xilinx_zcu104_base_202010_1/boot/fsbl.elf
+  [pmufw_image] /opt/xilinx/platforms/xilinx_zcu104_base_202010_1/sw/xilinx_zcu104_base_202010_1/boot/pmufw.elf
+  [destination_device=pl] /home/hy/hy/vitis_workspace/fft_FPGA/Hardware/package.build/package/system.bit
+  [destination_cpu=a53-0, exception_level=el-3, trustzone] /opt/xilinx/platforms/xilinx_zcu104_base_202010_1/sw/xilinx_zcu104_base_202010_1/boot/bl31.elf
+  [destination_cpu=a53-0, exception_level=el-2] /opt/xilinx/platforms/xilinx_zcu104_base_202010_1/sw/xilinx_zcu104_base_202010_1/boot/u-boot.elf
+}
