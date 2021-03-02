@@ -134,3 +134,16 @@ python读取数据，调用scipy.fft，FFT处理后作为golden data文件(scipy
 6. 为处理大规模数据，对FFT进行分段（overlap-save）是个方法，但是在测试时误差很大，还在调试（可能分段方式不对？）。
 
 ![resource](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/ols.png)
+
+# 4 vitis 软硬件仿真与开发
+在vitis上完成SW-Emulation和HW-Emulation, 以及实现硬件综合开发生成镜像文件和比特流文件等供下载到ZCU104
+在vitis上完成的整个仿真构成：
+![仿真构成](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/system_emu.png)
+
+![qemu虚拟平台](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/qemu.png)
+
+![硬件综合](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/hardware_build.png)
+
+![上板测试](https://github.com/kongxiangcong/Pulsar-FPGA/blob/main/pic/zcu104.png)
+
+
